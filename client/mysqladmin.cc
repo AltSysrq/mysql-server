@@ -171,7 +171,7 @@ static struct my_option my_long_options[] =
   {"host", 'h', "Connect to host.", &host, &host, 0, GET_STR,
    REQUIRED_ARG, 0, 0, 0, 0, 0, 0},
   {"no-beep", 'b', "Turn off beep on error.", &opt_nobeep,
-   &opt_nobeep, 0, GET_BOOL, NO_ARG, 0, 0, 0, 0, 0, 0}, 
+   &opt_nobeep, 0, GET_BOOL, NO_ARG, 0, 0, 0, 0, 0, 0},
   {"password", 'p',
    "Password to use when connecting to server. If password is not given it's asked from the tty.",
    0, 0, 0, GET_PASSWORD, OPT_ARG, 0, 0, 0, 0, 0, 0},
@@ -235,9 +235,9 @@ static struct my_option my_long_options[] =
    "Default authentication client-side plugin to use.",
    &opt_default_auth, &opt_default_auth, 0,
    GET_STR, REQUIRED_ARG, 0, 0, 0, 0, 0, 0},
-  {"enable_cleartext_plugin", OPT_ENABLE_CLEARTEXT_PLUGIN, 
+  {"enable_cleartext_plugin", OPT_ENABLE_CLEARTEXT_PLUGIN,
     "Enable/disable the clear text authentication plugin.",
-   &opt_enable_cleartext_plugin, &opt_enable_cleartext_plugin, 
+   &opt_enable_cleartext_plugin, &opt_enable_cleartext_plugin,
    0, GET_BOOL, OPT_ARG, 0, 0, 0, 0, 0, 0},
   {"show_warnings", OPT_SHOW_WARNINGS,
    "Show warnings after execution",
@@ -347,7 +347,7 @@ int main(int argc,char *argv[])
   mysql_init(&mysql);
   my_getopt_use_args_separator= TRUE;
   if (load_defaults("my",load_default_groups,&argc,&argv))
-   exit(1); 
+   exit(1);
   my_getopt_use_args_separator= FALSE;
 
   save_argv = argv;				/* Save for free_defaults */
@@ -405,7 +405,7 @@ int main(int argc,char *argv[])
   mysql_options4(&mysql, MYSQL_OPT_CONNECT_ATTR_ADD,
                  "program_name", "mysqladmin");
   if (using_opt_enable_cleartext_plugin)
-    mysql_options(&mysql, MYSQL_ENABLE_CLEARTEXT_PLUGIN, 
+    mysql_options(&mysql, MYSQL_ENABLE_CLEARTEXT_PLUGIN,
                   (char*) &opt_enable_cleartext_plugin);
 
   first_command= find_type(argv[0], &command_typelib, FIND_TYPE_BASIC);
@@ -1050,7 +1050,6 @@ static int execute_commands(MYSQL *mysql,int argc, char **argv)
       }
       else
       {
-        print_cmdline_password_warning();
         typed_password= argv[1];
       }
 
@@ -1135,7 +1134,7 @@ static int execute_commands(MYSQL *mysql,int argc, char **argv)
       }
 error:
       /* free up memory from prompted password */
-      if (typed_password != argv[1]) 
+      if (typed_password != argv[1])
       {
         my_free(typed_password);
         my_free(verified);
@@ -1257,7 +1256,7 @@ static void usage(void)
   puts("Administration program for the mysqld daemon.");
   printf("Usage: %s [OPTIONS] command command....\n", my_progname);
   /*
-    Turn default for zombies off so that the help on how to 
+    Turn default for zombies off so that the help on how to
     turn them off text won't show up.
     This is safe to do since it's followed by a call to exit().
   */

@@ -57,7 +57,7 @@ enum enum_special_opt
 char *disabled_my_option= (char*) "0";
 char *enabled_my_option= (char*) "1";
 
-/* 
+/*
    This is a flag that can be set in client programs. 0 means that
    my_getopt will not print error messages, but the client should do
    it by itself
@@ -65,7 +65,7 @@ char *enabled_my_option= (char*) "1";
 
 my_bool my_getopt_print_errors= 1;
 
-/* 
+/*
    This is a flag that can be set in client programs. 1 means that
    my_getopt will skip over options it does not know how to handle.
 */
@@ -343,7 +343,7 @@ int my_handle_options(int *argc, char ***argv,
 	    if (must_be_var)
 	    {
 	      if (my_getopt_print_errors)
-                my_getopt_error_reporter(option_is_loose ? 
+                my_getopt_error_reporter(option_is_loose ?
                                          WARNING_LEVEL : ERROR_LEVEL,
                                          "unknown variable '%s'", cur_arg);
 	      if (!option_is_loose)
@@ -453,9 +453,6 @@ int my_handle_options(int *argc, char ***argv,
 	}
 	else
 	  argument= optend;
-
-        if (optp->var_type == GET_PASSWORD && is_cmdline_arg && argument)
-          print_cmdline_password_warning();
       }
       else  /* must be short option */
       {
@@ -493,8 +490,6 @@ int my_handle_options(int *argc, char ***argv,
 		  argument= optend + 1;
 		  /* This is in effect a jump out of the outer loop */
 		  optend= (char*) " ";
-                  if (optp->var_type == GET_PASSWORD && is_cmdline_arg)
-                    print_cmdline_password_warning();
 		}
 		else
 		{
@@ -609,28 +604,10 @@ done:
 
 
 /**
- * This function should be called to print a warning message
- * if password string is specified on the command line.
- */
-
-void print_cmdline_password_warning()
-{
-  static my_bool password_warning_announced= FALSE;
-
-  if (!password_warning_announced)
-  {
-    my_message_local(WARNING_LEVEL, "Using a password on the command line "
-                                    "interface can be insecure.");
-    password_warning_announced= TRUE;
-  }
-}
-
-
-/**
   @brief Check for struct options
 
   @param[in]   cur_arg     Current argument under processing from argv
-  @param[in]   key_name    variable where to store the possible key name 
+  @param[in]   key_name    variable where to store the possible key name
 
   @details
   In case option is a struct option, returns a pointer to the current
@@ -647,12 +624,12 @@ void print_cmdline_password_warning()
 static char *check_struct_option(char *cur_arg, char *key_name)
 {
   char *dot_pos, *equal_pos, *space_pos;
- 
+
   dot_pos= strcend(cur_arg + 1, '.'); /* Skip the first character */
   equal_pos= strcend(cur_arg, '=');
   space_pos= strcend(cur_arg, ' ');
 
-  /* 
+  /*
      If the first dot is after an equal sign, then it is part
      of a variable value and the option is not a struct option.
      Also, if the last character in the string before the ending
@@ -851,7 +828,7 @@ static int setval(const struct my_option *opts, void *value, char *argument,
         uint error_len;
 
         *((ulonglong*)value)=
-              find_set_from_flags(opts->typelib, opts->typelib->count, 
+              find_set_from_flags(opts->typelib, opts->typelib->count,
                                   *(ulonglong *)value, opts->def_value,
                                   argument, (uint)strlen(argument),
                                   &error, &error_len);
@@ -887,7 +864,7 @@ ret:
 
   IMPLEMENTATION
     Go through all options in the my_option struct. Return true
-    if an option is found. sets opt_res to the option found, if any. 
+    if an option is found. sets opt_res to the option found, if any.
 
     @param         optpat   name of option to find (with - or _)
     @param         length   Length of optpat
@@ -911,7 +888,7 @@ static bool findopt(char *optpat, uint length,
 }
 
 
-/* 
+/*
   function: compare_strings
 
   Works like strncmp, other than 1.) considers '-' and '_' the same.
@@ -941,7 +918,7 @@ static longlong eval_num_suffix(char *argument, int *error, char *option_name)
 {
   char *endchar;
   longlong num;
-  
+
   *error= 0;
   errno= 0;
   num= my_strtoll(argument, &endchar, 10);
@@ -1011,7 +988,7 @@ static ulonglong eval_num_suffix_ull(char *argument, int *error, char *option_na
   return num;
 }
 
-/* 
+/*
   function: getopt_ll
 
   Evaluates and returns the value that user gave as an argument
@@ -1108,9 +1085,9 @@ longlong getopt_ll_limit_value(longlong num, const struct my_option *optp,
 
 static inline my_bool is_negative_num(char* num)
 {
-  while (my_isspace(&my_charset_latin1, *num)) 
+  while (my_isspace(&my_charset_latin1, *num))
     num++;
-  
+
   return (*num == '-');
 }
 
@@ -1136,7 +1113,7 @@ static ulonglong getopt_ull(char *arg, const struct my_option *optp, int *err)
     num= 0;
   else
     num= eval_num_suffix_ull(arg, err, (char*) optp->name);
-  
+
   return getopt_ull_limit_value(num, optp, NULL);
 }
 
@@ -1351,7 +1328,7 @@ void my_cleanup_options(const struct my_option *options)
 }
 
 
-/* 
+/*
   initialize all variables to their default values
 
   SYNOPSIS
