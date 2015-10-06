@@ -200,7 +200,7 @@ c_delbefore1(EditLine *el)
 protected int
 ce__isword(Int p)
 {
-        return Isalnum(p) || Strchr(STR("*?_-.[]~="), p) != NULL;
+        return Isalnum(p);
 }
 
 
@@ -519,7 +519,7 @@ ch_enlargebufs(EditLine *el, size_t addlen)
 
 	/* zero the newly added memory, leave old data in */
 	(void) memset(&newbuffer[sz], 0, (newsz - sz) * sizeof(*newbuffer));
-	    
+
 	oldbuf = el->el_line.buffer;
 
 	el->el_line.buffer = newbuffer;
@@ -568,7 +568,7 @@ ch_enlargebufs(EditLine *el, size_t addlen)
 	el->el_chared.c_redo.lim = newbuffer +
 			(el->el_chared.c_redo.lim - el->el_chared.c_redo.buf);
 	el->el_chared.c_redo.buf = newbuffer;
-	
+
 	if (!hist_enlargebuf(el, sz, newsz))
 		return 0;
 
