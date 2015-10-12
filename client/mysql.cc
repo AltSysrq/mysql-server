@@ -1325,12 +1325,14 @@ int main(int argc,char *argv[])
   window_resize(0);
 #endif
 
-  put_info("Welcome to the MySQL monitor.  Commands end with ; or \\g.",
-	   INFO_INFO);
-  my_snprintf((char*) glob_buffer.ptr(), glob_buffer.alloced_length(),
-	   "Your MySQL connection id is %lu\nServer version: %s\n",
-	   mysql_thread_id(&mysql), server_version_string(&mysql));
-  put_info((char*) glob_buffer.ptr(),INFO_INFO);
+  if (verbose) {
+    put_info("Welcome to the MySQL monitor.  Commands end with ; or \\g.",
+             INFO_INFO);
+    my_snprintf((char*) glob_buffer.ptr(), glob_buffer.alloced_length(),
+                "Your MySQL connection id is %lu\nServer version: %s\n",
+                mysql_thread_id(&mysql), server_version_string(&mysql));
+    put_info((char*) glob_buffer.ptr(),INFO_INFO);
+  }
 
   put_info(ORACLE_WELCOME_COPYRIGHT_NOTICE("2000"), INFO_INFO);
 
@@ -1408,10 +1410,12 @@ int main(int argc,char *argv[])
 #endif
   }
 
-  sprintf(buff, "%s",
-	  "Type 'help;' or '\\h' for help. Type '\\c' to clear the current input "
-    "statement.\n");
-  put_info(buff,INFO_INFO);
+  if (verbose) {
+      sprintf(buff, "%s",
+              "Type 'help;' or '\\h' for help. Type '\\c' to clear the current input "
+              "statement.\n");
+      put_info(buff,INFO_INFO);
+  }
   if (mysql.options.protocol == MYSQL_PROTOCOL_SOCKET &&
       mysql.options.extension->ssl_enforce == TRUE)
   put_info("You are enforcing ssl conection via unix socket. Please consider\n"
