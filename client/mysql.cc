@@ -141,6 +141,7 @@ static my_bool column_types_flag;
 static my_bool preserve_comments= 0;
 static ulong opt_max_allowed_packet, opt_net_buffer_length;
 static uint verbose=0,opt_silent=0,opt_mysql_port=0, opt_local_infile=0;
+static uint suppress_copyright_notice=0;
 static uint opt_enable_cleartext_plugin= 0;
 static my_bool using_opt_enable_cleartext_plugin= 0;
 static uint my_end_arg;
@@ -1334,7 +1335,9 @@ int main(int argc,char *argv[])
     put_info((char*) glob_buffer.ptr(),INFO_INFO);
   }
 
-  put_info(ORACLE_WELCOME_COPYRIGHT_NOTICE("2000"), INFO_INFO);
+  if (!suppress_copyright_notice) {
+    put_info(ORACLE_WELCOME_COPYRIGHT_NOTICE("2000"), INFO_INFO);
+  }
 
   if (!status.batch)
   {
@@ -1804,6 +1807,9 @@ static struct my_option my_long_options[] =
    0, 0, 0, 0},
   {"verbose", 'v', "Write more. (-v -v -v gives the table output format).", 0,
    0, 0, GET_NO_ARG, NO_ARG, 0, 0, 0, 0, 0, 0},
+  {"suppress-copyright-notice", OPT_SUPPRESS_COPYRIGHT_NOTICE,
+   "Don't print the copyright notice on startup.", 0,
+   0, 0, GET_NO_ARG, NO_ARG, 0, 0, 0, 0, 0, 0},
   {"version", 'V', "Output version information and exit.", 0, 0, 0,
    GET_NO_ARG, NO_ARG, 0, 0, 0, 0, 0, 0},
   {"wait", 'w', "Wait and retry if connection is down.", 0, 0, 0, GET_NO_ARG,
@@ -2074,6 +2080,9 @@ get_one_option(int optid, const struct my_option *opt __attribute__((unused)),
       verbose= 0;
     else
       verbose++;
+    break;
+  case OPT_SUPPRESS_COPYRIGHT_NOTICE:
+    suppress_copyright_notice = 1;
     break;
   case 'B':
     status.batch= 1;
