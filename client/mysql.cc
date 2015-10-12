@@ -2991,7 +2991,7 @@ static void build_completion_hash(bool rehash, bool write_info)
       put_info(mysql_error(&mysql),INFO_INFO);
     else
     {
-      if (mysql_num_rows(tables) > 0 && !opt_silent && write_info)
+      if (mysql_num_rows(tables) > 0 && !opt_silent && write_info && verbose)
       {
 	tee_fprintf(stdout, "\
 Reading table information for completion of table and column names\n\
