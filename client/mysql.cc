@@ -190,7 +190,8 @@ static MEM_ROOT hash_mem_root;
 static uint prompt_counter;
 static char delimiter[16]= DEFAULT_DELIMITER;
 static size_t delimiter_length= 1;
-unsigned short terminal_width= 80;
+/* 0 = we don't know */
+static unsigned short terminal_width= 0;
 
 #if defined (_WIN32) && !defined (EMBEDDED_LIBRARY)
 static char *shared_memory_base_name=0;
@@ -3683,7 +3684,9 @@ com_go(String *buffer,char *line __attribute__((unused)))
 	  print_table_data_html(result);
 	else if (opt_xml)
 	  print_table_data_xml(result);
-  else if (vertical || (!no_auto_vertical_output && (terminal_width < get_result_width(result))))
+        else if (vertical || (!no_auto_vertical_output &&
+                              0 != terminal_width &&
+                              terminal_width < get_result_width(result)))
 	  print_table_data_vertically(result);
 	else if (opt_silent && verbose <= 2 && !output_tables)
 	  print_tab_data(result);
