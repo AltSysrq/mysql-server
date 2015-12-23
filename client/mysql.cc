@@ -253,7 +253,13 @@ my_win_is_console_cached(FILE *file)
 
 /* Various printing flags */
 #define MY_PRINT_ESC_0 1  /* Replace 0x00 bytes to "\0"              */
-#define MY_PRINT_SPS_0 2  /* Replace 0x00 bytes to space             */
+/* Originally: Replace 0x00 bytes to space
+ *
+ * Since this is basically a "displaying to the terminal, forget about fidelity
+ * anyway" flag, this now causes all control characters to be displayed in
+ * reverse video as their corresponding non-ASCII character.
+ */
+#define MY_PRINT_SPS_0 2
 #define MY_PRINT_XML   4  /* Encode XML entities                     */
 #define MY_PRINT_MB    8  /* Recognize multi-byte characters         */
 #define MY_PRINT_CTRL 16  /* Replace TAB, NL, CR to "\t", "\n", "\r" */
@@ -5448,8 +5454,20 @@ void tee_write(FILE *file, const char *s, size_t slen, int flags)
 
     if ((flags & MY_PRINT_XML) && (t= array_value(xmlmeta, *s)))
       tee_fputs(t, file);
-    else if ((flags & MY_PRINT_SPS_0) && *s == '\0')
-      tee_putc((int) ' ', file);   // This makes everything hard
+    else if ((flags & MY_PRINT_SPS_0) && (
+                 (*s >= '\0' && *s < ' ') || *s == '\177')) {
+      char buf[16];
+      /* No, this doesn't work on windows, but I don't care. And at least it'll
+       * display *something* for BIT fields.
+       *
+       * The use of inversion rather than ^-notation and similar is necessary
+       * since the table formatter considers these one character wide, and I
+       * don't really want to mess with that right now.
+       */
+      snprintf(buf, sizeof(buf), "\033[7m%c\033[0m",
+               *s < '\177'? *s + '@' : '?');
+      tee_fputs(buf, file);
+    }
     else if ((flags & MY_PRINT_ESC_0) && *s == '\0')
       tee_fputs("\\0", file);      // This makes everything hard
     else if ((flags & MY_PRINT_CTRL) && *s == '\t')
