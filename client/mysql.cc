@@ -263,6 +263,7 @@ my_win_is_console_cached(FILE *file)
 #define MY_PRINT_XML   4  /* Encode XML entities                     */
 #define MY_PRINT_MB    8  /* Recognize multi-byte characters         */
 #define MY_PRINT_CTRL 16  /* Replace TAB, NL, CR to "\t", "\n", "\r" */
+#define MY_PRINT_VNL 256  /* Print LF literally */
 
 void tee_write(FILE *file, const char *s, size_t slen, int flags);
 void tee_fprintf(FILE *file, const char *fmt, ...);
@@ -4222,7 +4223,7 @@ print_table_data_vertically(MYSQL_RES *result)
         tee_fprintf(PAGER, "%*s: ",(int) max_length,field->name);
       if (cur[off])
       {
-        tee_write(PAGER, cur[off], lengths[off], MY_PRINT_SPS_0 | MY_PRINT_MB);
+        tee_write(PAGER, cur[off], lengths[off], MY_PRINT_SPS_0 | MY_PRINT_MB | MY_PRINT_VNL);
         tee_putc('\n', PAGER);
       }
       else
@@ -5454,6 +5455,8 @@ void tee_write(FILE *file, const char *s, size_t slen, int flags)
 
     if ((flags & MY_PRINT_XML) && (t= array_value(xmlmeta, *s)))
       tee_fputs(t, file);
+    else if ((flags & MY_PRINT_VNL) && '\n' == *s)
+      tee_fputs("\n", file);
     else if ((flags & MY_PRINT_SPS_0) && (
                  (*s >= '\0' && *s < ' ') || *s == '\177')) {
       char buf[16];
